@@ -13,31 +13,51 @@ import string
 class CaesarsCipher():
     """ Implementation of Caesar Cipher"""
 
+    result = ''
+    msg = ''
+    key = ''
+    ciphered = False
+
     def __init__(self,key,msg):
         if msg:
             self.msg = msg
         if key:
             self.key = key
-        if key and msg:
-            self.cipher()
-            print self.result
 
     def cipher(self):
-        """Perform Caesar Cipher shift operation on string"""
+        """Perform Caesar Cipher shiftcipher"""
+        self.result = ''
         for i in self.msg.lower():
             try: 
-                """if python didn't load the mapping into memory for us already 
-                   via string, we could enumerate the alphabet and parse the list
-                   to find pos
-                """
                 pos = string.lowercase.index(i)
             except ValueError as e: 
-                result = "{c}{n}".format(c=result,n=i)
+                self.result = "{c}{n}".format(c=self.result,n=i)
                 continue
             shift_pos = pos + self.key
             if shift_pos > 25:
                 shift_pos = shift_pos-25 
-            return self.result = "{c}{n}".format(
-                c=result,
+            self.result = "{c}{n}".format(
+                c=self.result,
                 n=string.lowercase[shift_pos % 26])
+        self.ciphered = True
+        return self.result
+
+    def decipher(self):
+        """Perform Caesar Cipher shift decipher"""
+        if self.ciphered is True: 
+            self.msg=self.result
+            self.result=''
+        for i in self.msg.lower():
+            try:
+                pos = string.lowercase.index(i)
+            except ValueError as e:
+                self.result = "{c}{n}".format(c=self.result,n=i)
+                continue
+            shift_pos = pos - self.key
+            if shift_pos < 0:
+                shift_pos = shift_pos+25
+            self.result = "{c}{n}".format(
+                c=self.result,
+                n=string.lowercase[shift_pos % 26])
+        return self.result
 
