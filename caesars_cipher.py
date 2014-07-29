@@ -10,30 +10,47 @@ __author__ = 'mrpaws'
 
 import string
 
-class CaesarsCipher():
+class CCException(Exception):
+    """Caesar's Cipher exceptions"""
+    pass
+
+class CaesarsCipher(object):
     """ Implementation of Caesar Cipher"""
 
     result = ''
-    msg = ''
-    key = ''
     ciphered = False
 
-    def __init__(self,key,msg):
-        if msg:
-            self.msg = msg
-        if key:
-            self.key = key
+    def get_msg(self):
+        return self._msg
+    def set_msg(self, msg):
+        ciphered = False
+        self._msg = msg    
+
+    msg = property(get_msg, set_msg)
+
+    def __init__(self,**kwargs):
+        """Takes optional keyword parameters (msg, shift, op)"""
+        self.set_msg(kwargs.get('msg',''))
+        self.shift = kwargs.get('shift','')
+        op = kwargs.get('op', False)
+        if op is not False:
+            try:
+                op = getattr(self,op)
+            except AttributeError as e: 
+                raise CCException("Valid operations: (cipher|decipher).")
+            op()
 
     def cipher(self):
-        """Perform Caesar Cipher shiftcipher"""
+        """Perform Caesar Cipher cipher"""
+        msg = self.get_msg()
         self.result = ''
-        for i in self.msg.lower():
+        for i in msg.lower():
             try: 
                 pos = string.lowercase.index(i)
             except ValueError as e: 
                 self.result = "{c}{n}".format(c=self.result,n=i)
                 continue
-            shift_pos = pos + self.key
+            shift_pos = pos + self.shift
             if shift_pos > 25:
                 shift_pos = shift_pos-25 
             self.result = "{c}{n}".format(
@@ -44,20 +61,21 @@ class CaesarsCipher():
 
     def decipher(self):
         """Perform Caesar Cipher shift decipher"""
-        if self.ciphered is True: 
-            self.msg=self.result
-            self.result=''
-        for i in self.msg.lower():
+        if self.ciphered is True:
+            msg = self.result
+            self.result = ''
+        for i in msg.lower():
             try:
                 pos = string.lowercase.index(i)
             except ValueError as e:
                 self.result = "{c}{n}".format(c=self.result,n=i)
                 continue
-            shift_pos = pos - self.key
+            shift_pos = pos - self.shift
             if shift_pos < 0:
                 shift_pos = shift_pos+25
             self.result = "{c}{n}".format(
                 c=self.result,
                 n=string.lowercase[shift_pos % 26])
+        self.ciphered = False
         return self.result
 
