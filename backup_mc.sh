@@ -1,5 +1,6 @@
 #!/usr/bin/zsh
 # backup_mc.sh - paws
+# takes incremental backups using cpio and/or rsyn (based on cron) 
 # Last Modified 07/27/2014
 
 ## Change these to relative server locations,
@@ -18,7 +19,7 @@ daily_clean_flag="${backup_location}/.daily.stamp"
 weekly_clean_flag="${backup_location}/.weekly.stamp"
 daily_location="${backup_location}/daily"
 weekly_location="${backup_location}/weekly"
-incremental_location="${backup_location}/incremental"
+incremental_location="${backup_location}/regular"
 daily_comp=0
 weekly_comp=0
 
@@ -95,7 +96,7 @@ if [ ${rval} -ne 0 ]; then
 fi
 }
 
-## whatever the cron is set to, everything older than 24 hours is gone
+## regardless of cron, everything older than 24 hours is gone
 roll_runtime() {
 if [ ! -d ${incremental_location} -o ${incremental_location} = "/" -o ${incremental_location} = "" ]; then
   echo "[ERROR]: Unable to safely remove incremental files.  Script is broken."
