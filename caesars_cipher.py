@@ -39,12 +39,16 @@ class CaesarsCipher(object):
             except AttributeError as e: 
                 raise CCException("Valid operations: (cipher|decipher).")
             op()
+            print "(Shift: {s}): {r}".format(s=self.shift,r=self.result)
 
     def cipher(self):
         """Perform Caesar Cipher cipher"""
         msg = self.get_msg()
         self.result = ''
         for i in msg.lower():
+            if i is ' ':
+                self.result="{} ".format(self.result)
+                continue
             pos = string.lowercase.index(i)
             self.result = "{}{}".format(self.result,
                 string.lowercase[(pos+self.shift) % 26]) # 
@@ -56,7 +60,12 @@ class CaesarsCipher(object):
         if self.ciphered is True:
             msg = self.result
             self.result = ''
+        else: 
+            msg = self.msg
         for i in msg.lower():
+            if i is ' ': 
+                self.result="{} ".format(self.result)
+                continue
             pos = string.lowercase.index(i)
             self.result = "{c}{n}".format(
                 c=self.result,
