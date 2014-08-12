@@ -45,17 +45,9 @@ class CaesarsCipher(object):
         msg = self.get_msg()
         self.result = ''
         for i in msg.lower():
-            try: 
-                pos = string.lowercase.index(i)
-            except ValueError as e: 
-                self.result = "{c}{n}".format(c=self.result,n=i)
-                continue
-            shift_pos = pos + self.shift
-            if shift_pos > 25:
-                shift_pos = shift_pos-25 
-            self.result = "{c}{n}".format(
-                c=self.result,
-                n=string.lowercase[shift_pos % 26])
+            pos = string.lowercase.index(i)
+            self.result = "{}{}".format(self.result,
+                string.lowercase[(pos+self.shift) % 26]) # 
         self.ciphered = True
         return self.result
 
@@ -65,17 +57,10 @@ class CaesarsCipher(object):
             msg = self.result
             self.result = ''
         for i in msg.lower():
-            try:
-                pos = string.lowercase.index(i)
-            except ValueError as e:
-                self.result = "{c}{n}".format(c=self.result,n=i)
-                continue
-            shift_pos = pos - self.shift
-            if shift_pos < 0:
-                shift_pos = shift_pos+25
+            pos = string.lowercase.index(i)
             self.result = "{c}{n}".format(
                 c=self.result,
-                n=string.lowercase[shift_pos % 26])
+                n=string.lowercase[(pos-self.shift) % 26])
         self.ciphered = False
         return self.result
 
