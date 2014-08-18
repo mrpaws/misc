@@ -33,7 +33,7 @@ class Vigenere(Cipher):
             except(ValueError):
                 result = "{}{}".format(result,i)
                 continue
-            if key_pos == (key_len-1):
+            if key_pos == key_len:
                 key_pos=0
             newchr = shift(i,lc.index(key[key_pos]))
             key_pos=key_pos+1 
@@ -52,7 +52,7 @@ class Vigenere(Cipher):
             except(ValueError):
                 result = "{}{}".format(result,i)
                 continue
-            if key_pos == (key_len-1):
+            if key_pos == key_len:
                 key_pos=0
             newchr = unshift(i,lc.index(key[key_pos]))
             key_pos=key_pos+1
