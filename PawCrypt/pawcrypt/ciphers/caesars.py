@@ -18,18 +18,15 @@ class Caesars(Cipher):
     def __init__(self,**kwargs):
         super(Caesars,self).__init__(**kwargs)
 
-    def cipher(self):
+    def encode(self,msg,shift):
         """Perform Caesar Cipher cipher"""
-        super(Caesars,self).cipher()
-        for i in self.msg.lower():
-            self.result="{}{}".format(self.result,shift(i,self.shift))
-        self.ciphered = True
+        result=''
+        for i in msg.lower():
+            result="{}{}".format(result,shift(i,shift))
         return self.result
 
-    def decipher(self):
+    def decode(self,msg,shift):
         """Perform Caesar Cipher shift decipher"""
-        super(Caesars,self).decipher()
-        for i in self.msg.lower():
-            self.result="{}{}".format(self.result,unshift(i,self.shift))
-        self.ciphered = False
+        for i in msg.lower():
+            self.result="{}{}".format(result,unshift(i,shift))
         return self.result
