@@ -44,7 +44,6 @@ class Vigenere(Cipher):
         for i in msg.lower():
             try:
                 _ = lc.index(i)
-            # blindly add unknown chars
             except(ValueError):
                 result = "{}{}".format(result,i)
                 continue

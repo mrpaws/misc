@@ -15,52 +15,53 @@ class Cipher(object):
     ciphered = False
     result = ''
 
-    # used as aids for direct access via property 
-    def get_msg(self):
+    @property
+    def msg(self):
+        """the message for operation"""
         return self._msg
 
-    def set_msg(self, msg):
+    @msg.setter
+    def msg(self, msg):
         ciphered = False
         self.result = ''
         self._msg = msg    
 
-    def get_shift(self):
+    @property
+    def shift(self):
+        """the shift or key """
         return self._shift
 
-    def set_shift(self, shift):
+    @shift.setter
+    def shift(self, shift):
         ciphered = False
         self.result = ''
         if type(shift) is str:
-            print "SET"
-            self._shift = shift.lower()
+            shift = shift.lower()
         self._shift = shift  
-
-    msg = property(get_msg, set_msg)
-    shift = property(get_shift, set_shift)
 
     def __init__(self,**kwargs):
         """Takes optional keyword parameters (msg, shift, op)"""
-        self.set_msg(kwargs.get('msg',''))
-        self.set_shift(kwargs.get('shift',''))
+        self.msg = kwargs.get('msg','')
+        self.shift = kwargs.get('shift','')
         op = kwargs.get('op', False)
         if op:
             try:
                 op = getattr(self,op)
             except AttributeError as e: 
-                raise CipherError("Valid operations: (encode|decode).")
+                raise CipherError("valid operations: (encode|decode).")
             op()
             print "cipher={c}|key={s}|{r}".format(c=self.__module__.split('.')[2],
-                                                 s=self.get_shift(),
-                                                 r=self.result)
+                                                  s=self.shift,
+                                                  r=self.result)
 
     def encode(self):
         """ wrapper function for encryption"""
         if self.ciphered:
-            raise CipherError("Already encoded.")
+            raise CipherError("already encoded.")
         try:
-            self.result = self.doEncode(self.get_msg(),self.get_shift())
+            self.result = self.doEncode(self.msg,self.shift)
         except Exception as e:
-            raise CipherError("Encoding failure: {}.".format(e))
+            raise CipherError("encoding failure: {}.".format(e))
         self.ciphered = True
         return self.result
 
@@ -70,19 +71,19 @@ class Cipher(object):
             msg = self.result 
             self.result = ''
         else:
-            msg = self.get_msg()
+            msg = self.msg
         try:
-            self.result = self.doDecode(msg,self.get_shift())
+            self.result = self.doDecode(msg,self.shift)
         except Exception as e:
-            raise CipherError("Decoding failure {}.".format(e))
+            raise CipherError("decoding failure {}.".format(e))
         self.ciphered = False
         return self.result
 
     def doEncode(self):
         """override with function that encodes"""
-        raise CipherError("Override this func and return the encoded msg")
+        raise CipherError("override this func and return the encoded msg")
     
     def doDecode(self):
         """override with function that decodes"""
-        raise CipherError("Override this funct and return the decoded msg")
+        raise CipherError("override this funct and return the decoded msg")
        
