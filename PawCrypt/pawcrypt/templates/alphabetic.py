@@ -18,6 +18,7 @@ class Cipher(object):
     # used as aids for direct access via property 
     def get_msg(self):
         return self._msg
+
     def set_msg(self, msg):
         ciphered = False
         self.result = ''
@@ -25,9 +26,13 @@ class Cipher(object):
 
     def get_shift(self):
         return self._shift
+
     def set_shift(self, shift):
         ciphered = False
         self.result = ''
+        if type(shift) is str:
+            print "SET"
+            self._shift = shift.lower()
         self._shift = shift  
 
     msg = property(get_msg, set_msg)
@@ -44,8 +49,8 @@ class Cipher(object):
             except AttributeError as e: 
                 raise CipherError("Valid operations: (encode|decode).")
             op()
-            print "|cipher={c}|key={s})|{r}".format(c=self.__module__.split('.')[2],
-                                                 s=self.shift,
+            print "cipher={c}|key={s}|{r}".format(c=self.__module__.split('.')[2],
+                                                 s=self.get_shift(),
                                                  r=self.result)
 
     def encode(self):
@@ -53,7 +58,7 @@ class Cipher(object):
         if self.ciphered:
             raise CipherError("Already encoded.")
         try:
-            self.result = self.doEncode(self.msg,self.shift)
+            self.result = self.doEncode(self.get_msg(),self.get_shift())
         except Exception as e:
             raise CipherError("Encoding failure: {}.".format(e))
         self.ciphered = True
@@ -65,9 +70,9 @@ class Cipher(object):
             msg = self.result 
             self.result = ''
         else:
-            msg = self.msg
+            msg = self.get_msg()
         try:
-            self.result = self.doDecode(msg,self.shift)
+            self.result = self.doDecode(msg,self.get_shift())
         except Exception as e:
             raise CipherError("Decoding failure {}.".format(e))
         self.ciphered = False
@@ -75,10 +80,9 @@ class Cipher(object):
 
     def doEncode(self):
         """override with function that encodes"""
-        return None
+        raise CipherError("Override this func and return the encoded msg")
     
     def doDecode(self):
         """override with function that decodes"""
-        return None
+        raise CipherError("Override this funct and return the decoded msg")
        
-

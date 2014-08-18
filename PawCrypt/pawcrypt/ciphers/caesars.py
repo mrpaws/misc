@@ -1,9 +1,9 @@
 """ 
     caesars_cipher.py - implementation of Caesar's Cipher
 
-        Self-inflicted practice exercise while working on Khan Academy's
-        Cryptography learning material
+        TODO: adjust to work for any given character sets
 
+        Practice from content learned at :
         https://www.khanacademy.org/computing/computer-science/cryptography/ciphers/a/shift-cipher
 """
 __author__ = 'paws@delimitize.com'
@@ -13,10 +13,7 @@ from pawcrypt.lib.alphabetic import shift,unshift
 
 class Caesars(Cipher):
 
-    """ Implementation of Caesar Cipher"""
-
-    def __init__(self,**kwargs):
-        super(Caesars,self).__init__(**kwargs)
+    """ Py strings Implementation of Caesar's Cipher"""
 
     def encode(self,msg,shift):
         """Perform Caesar Cipher cipher"""

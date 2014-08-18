@@ -16,11 +16,7 @@ from pawcrypt.lib.alphabetic import shift,unshift
 
 class Vigenere(Cipher):
 
-    """ Implementation of Vigenere Cipher"""
-
-    def __init__(self,**kwargs):
-        """Initialize parameters"""
-        super(Vigenere,self).__init__(**kwargs)
+    """ Py Strings Implementation of Vigenere Cipher"""
 
     def doEncode(self,msg,key):
         """Encode Vigenere cipher"""
