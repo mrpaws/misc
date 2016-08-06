@@ -1,0 +1,27 @@
+#!/bin/bash
+# ubuntu 64 bit only
+cd /tmp			
+curl https://amazon-ssm-us-west-2.s3.amazonaws.com/latest/debian_amd64/amazon-ssm-agent.deb -o amazon-ssm-agent.deb
+dpkg -i amazon-ssm-agent.deb
+rm /tmp/amazon-ssm-agent.deb
+apt-get update
+apt-get -y install python2.7
+apt-get -y install python-pip
+pip install awscli
+groupadd -g 10013p
+useradd -d /home/p -m -s /bin/bash -u 1003 -g p -c "pawpy admin" p
+mkdir -p /home/p/.ssh
+chown p:p /home/p/.ssh
+aws iam get-ssh-public-key --user-name pawpy --encoding SSH --ssh-public-key-id "APKAJWE5B4BDLXAZITIA" --output json | grep SSHPublicKeyBody | sed -e 's/^.*: "//' -e 's/",.*$//' > /home/p/.ssh/authorized_keys
+mkfs -t ext4 /dev/xvdb
+echo "/dev/xvdb       /opt   ext4    defaults,nofail        0       2" >> /etc/fstab
+/etc/init.d/bitnami stop
+echo "Moving Bitnami to stage location (/)."
+mv /opt/bitnami /
+echo "Mounting new /opt from /dev/xvdb"
+mount /opt
+echo "Copying Bitnami packages to /opt (this may take a bit)"
+mv /bitnami /opt
+echo "Starting Bitnami..."
+/etc/init.d/bitnami start
+echo "Wordpress system init complete."
