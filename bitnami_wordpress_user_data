@@ -1,193 +1,27 @@
- 
- 
-AWS
-  
-Services
-   IAM  Route 53  S3  EC2  VPC  CloudWatch 
-Edit
- 
-pawpy @ delimitize
-  
-Oregon
-  
-Support
- 
-
-
-EC2 Dashboard
-Events
-Tags
-Reports
-Limits
-
-INSTANCES
-Instances
-Spot Requests
-Reserved Instances
-Scheduled Instances
-Dedicated Hosts
-
-IMAGES
-AMIs
-Bundle Tasks
-
-ELASTIC BLOCK STORE
-Volumes
-Snapshots
-
-NETWORK & SECURITY
-Security Groups
-Elastic IPs
-Placement Groups
-Key Pairs
-Network Interfaces
-
-LOAD BALANCING
-Load Balancers
-
-AUTO SCALING
-Launch Configurations
-Auto Scaling Groups
-
-COMMANDS
-Command History
-Documents
-Managed Instances
-Activations
-Launch InstanceConnectActionsRefreshShow/Hide ColumnsHelp
-
-Filter by tags and attributes or search by keyword
-1 to 3 of 3
-  
-Instance:  i-0bdd46d8a12c49c76 (wordpress-multisite-primary)Public DNS: ec2-52-26-107-158.us-west-2.compute.amazonaws.com
-Description
-Status Checks
-Monitoring
-Tags
-Instance ID
-i-0bdd46d8a12c49c76
-Public DNS
-ec2-52-26-107-158.us-west-2.compute.amazonaws.com
-Instance state
-running
-Public IP
-52.26.107.158
-Instance type
-t2.micro
-Elastic IPs
-Private DNS
-ip-172-31-26-242.us-west-2.compute.internal
-Availability zone
-us-west-2a
-Private IPs
-172.31.26.242
-Security groups
-web-basic. view rules
-Secondary private IPs
-Scheduled events
-No scheduled events
-VPC ID
-vpc-cfb864ab
-AMI ID
-bitnami-wordpress-4.5.3-1-multisite-linux-ubuntu-14.04.3-x86_64-hvm-ebs (ami-3b0ec25b)
-Subnet ID
-subnet-c6f652a2
-Platform
--
-Network interfaces
-eth0
-IAM role
-wordpress-admin
-Source/dest. check
-True
-Key pair name
-amz-wordpress
-Owner
-759862026726
-EBS-optimized
-False
-Launch time
-August 6, 2016 at 4:49:49 PM UTC-7 (less than one hour)
-Root device type
-ebs
-Termination protection
-True
-Root device
-/dev/sda1
-Lifecycle
-normal
-Block devices
-/dev/sda1
-/dev/sdb
-Monitoring
-basic
-Alarm status
-None
-Kernel ID
--
-RAM disk ID
--
-Placement group
--
-Virtualization
-hvm
-Reservation
-r-0ad68d85a26bc59da
-AMI launch index
-0
-Tenancy
-default
-Host ID
--
-Affinity
--
-State transition reason
--
-Name
-
-Instance ID
-Instance Type
-Availability Zone
-Instance State
-Status Checks
-Alarm Status
-Public DNS
-Public IP
-Key Name
-Monitoring
-Launch Time
-Security Groups
-wordpress-multisite-primary
-i-0bdd46d8a12c49c76
-t2.micro
-us-west-2a
- running
- 2/2 checks passed
-None
-ec2-52-26-107-158.us-west-2.compute.amazonaws.com
-52.26.107.158
-amz-wordpress
-disabled
-August 6, 2016 at 4:49:49 PM UTC-7
-web-basic
-wordpress-multisite-primary
-i-0d4b3f2a473965bad
-t2.micro
-us-west-2a
- terminated
-None
-amz-wordpress
-disabled
-August 6, 2016 at 4:01:46 PM UTC-7
-wordpress-multisite-primary
-i-0e8dac7a56804feb4
-t2.micro
-us-west-2a
- terminated
-None
-amz-wordpress
-disabled
-August 6, 2016 at 4:42:05 PM UTC-7
-Feedback
-English
-Terms of UsePrivacy Policy© 2008 - 2016, Amazon Web Services, Inc. or its affiliates. All rights reserved.
+#!/bin/bash
+# ubuntu 64 bit only
+cd /tmp			
+curl https://amazon-ssm-us-west-2.s3.amazonaws.com/latest/debian_amd64/amazon-ssm-agent.deb -o amazon-ssm-agent.deb
+dpkg -i amazon-ssm-agent.deb
+rm /tmp/amazon-ssm-agent.deb
+apt-get update
+apt-get -y install python2.7
+apt-get -y install python-pip
+pip install awscli
+groupadd -g 1003 p
+useradd -d /home/p -m -s /bin/bash -u 1003 -g p -c "pawpy admin" p
+mkdir -p /home/p/.ssh
+chown p:p /home/p/.ssh
+aws iam get-ssh-public-key --user-name pawpy --encoding SSH --ssh-public-key-id "APKAJWE5B4BDLXAZITIA" --output json | grep SSHPublicKeyBody | sed -e 's/^.*: "//' -e 's/",.*$//' > /home/p/.ssh/authorized_keys
+mkfs -t ext4 /dev/xvdb
+echo "/dev/xvdb       /opt   ext4    defaults,nofail        0       2" >> /etc/fstab
+/etc/init.d/bitnami stop
+echo "Moving Bitnami to stage location (/)."
+mv /opt/bitnami /
+echo "Mounting new /opt from /dev/xvdb"
+mount /opt
+echo "Copying Bitnami packages to /opt (this may take a bit)"
+mv /bitnami /opt
+echo "Starting Bitnami..."
+/etc/init.d/bitnami start
+echo "Wordpress system init complete."
